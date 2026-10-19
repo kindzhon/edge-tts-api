@@ -1,13 +1,6 @@
 # Edge-TTS-API 依赖
-# API 服务 (FastAPI)
-fastapi>=0.109.0
-uvicorn[standard]>=0.27.0
+# Streamlit Web 框架
+streamlit>=1.30.0
 
 # TTS 引擎
 edge-tts>=6.1.0
-
-# Web 前端 (可选 - Streamlit 界面)
-streamlit>=1.30.0
-
-# HTTP 客户端 (Streamlit 调用 API 用)
-httpx>=0.26.0

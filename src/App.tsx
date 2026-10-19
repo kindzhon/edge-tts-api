@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'api' | 'demo' | 'deploy' | 'compare'>('api');
+  const [activeTab, setActiveTab] = useState<'api' | 'demo' | 'deploy'>('api');
   const [text, setText] = useState('你好，欢迎使用 Edge TTS API！');
   const [voice, setVoice] = useState('zh-CN-YunxiNeural');
   const [rate, setRate] = useState(0);
@@ -28,7 +28,7 @@ export default function App() {
     { label: '晓悠 (女声-童声)', value: 'zh-CN-XiaoyouNeural', default: false },
   ];
 
-  const apiUrl = `/text2audio?tex=${encodeURIComponent(text)}&spk=${voice}&rate=${rate}&vol=${vol}&pit=${pit}`;
+  const apiUrl = `?tex=${encodeURIComponent(text)}&spk=${voice}&rate=${rate}&vol=${vol}&pit=${pit}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(apiUrl);
@@ -49,19 +49,13 @@ export default function App() {
               <h1 className="text-xl font-bold text-white">
                 Edge-TTS-API
               </h1>
-              <p className="text-xs text-gray-400">FastAPI + edge-tts | RESTful 语音合成服务</p>
+              <p className="text-xs text-gray-400">Streamlit + edge-tts | 在线语音合成服务</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-medium rounded-full border border-emerald-500/30">
-              ● FastAPI
+              ● Streamlit
             </span>
-            <a
-              href="/docs"
-              className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-colors border border-white/10"
-            >
-              Swagger ↗
-            </a>
           </div>
         </div>
       </header>
@@ -79,7 +73,7 @@ export default function App() {
             </span>
           </h2>
           <p className="text-lg text-gray-400 max-w-2xl mx-auto mb-8">
-            基于 FastAPI + Microsoft Edge TTS 引擎，提供 RESTful API 接口。
+            基于 Streamlit + Microsoft Edge TTS 引擎，通过 URL 参数直接调用。
             支持 16+ 种中文语音角色，直接返回 MP3 音频文件。
           </p>
 
@@ -87,13 +81,13 @@ export default function App() {
           <div className="max-w-3xl mx-auto bg-black/40 rounded-2xl border border-white/10 p-6 backdrop-blur-sm">
             <div className="flex items-center gap-2 mb-3">
               <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs rounded font-mono">GET</span>
-              <code className="text-sm text-gray-300 font-mono">/text2audio</code>
+              <code className="text-sm text-gray-300 font-mono">/?tex=...</code>
             </div>
             <div className="bg-black/60 rounded-lg p-3 font-mono text-sm text-green-400 text-left overflow-x-auto">
               <span className="text-gray-500"># 对比百度 TTS API</span><br />
               <span className="text-yellow-300/80">http://tts.baidu.com/text2audio?cuid=baike&lan=ZH&ctp=1&pdt=301&vol=15&rate=32&tex=test</span><br /><br />
-              <span className="text-gray-500"># Edge-TTS-API (FastAPI)</span><br />
-              <span className="text-green-400">http://localhost:8000/text2audio?tex=test&spk=zh-CN-YunxiNeural&rate=0&vol=50&pit=0</span>
+              <span className="text-gray-500"># Edge-TTS-API (Streamlit)</span><br />
+              <span className="text-green-400">https://your-app.streamlit.app/?tex=test&spk=zh-CN-YunxiNeural&rate=0&vol=50&pit=0</span>
             </div>
           </div>
         </div>
@@ -103,7 +97,7 @@ export default function App() {
       <section className="max-w-6xl mx-auto px-4 pb-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { icon: '⚡', title: 'FastAPI', desc: '高性能异步框架' },
+            { icon: '⚡', title: 'Streamlit', desc: 'Python Web 框架' },
             { icon: '🎙️', title: '16+ 语音', desc: '多种中文角色' },
             { icon: '📦', title: 'MP3 直返', desc: '无需二次处理' },
             { icon: '🆓', title: '免费使用', desc: '无需 API Key' },
@@ -124,7 +118,6 @@ export default function App() {
             {([
               { key: 'api', label: '📡 API 文档' },
               { key: 'demo', label: '🎮 在线调试' },
-              { key: 'compare', label: '🔄 接口对比' },
               { key: 'deploy', label: '🚀 部署指南' },
             ] as const).map((tab) => (
               <button
@@ -149,42 +142,17 @@ export default function App() {
             <div className="bg-white/5 rounded-2xl border border-white/10 p-6">
               <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <span className="w-2 h-2 bg-emerald-400 rounded-full"></span>
-                核心端点
+                API 端点
               </h3>
               <div className="space-y-4">
                 <div className="bg-black/40 rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs rounded font-mono font-bold">GET</span>
-                    <code className="text-indigo-300 font-mono">/text2audio</code>
-                    <span className="text-xs text-gray-500">语音合成 - 直接返回 MP3</span>
+                    <code className="text-indigo-300 font-mono">/?tex=...&spk=...&rate=...&vol=...&pit=...</code>
                   </div>
                   <div className="font-mono text-xs text-gray-400 mt-2">
                     <p>Content-Type: audio/mpeg</p>
-                    <p>Content-Disposition: inline; filename="tts_output.mp3"</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div className="bg-black/40 rounded-xl p-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="px-1.5 py-0.5 bg-blue-500/20 text-blue-400 text-xs rounded font-mono">GET</span>
-                      <code className="text-indigo-300 font-mono text-sm">/voices</code>
-                    </div>
-                    <p className="text-xs text-gray-500">获取可用语音列表</p>
-                  </div>
-                  <div className="bg-black/40 rounded-xl p-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="px-1.5 py-0.5 bg-blue-500/20 text-blue-400 text-xs rounded font-mono">GET</span>
-                      <code className="text-indigo-300 font-mono text-sm">/health</code>
-                    </div>
-                    <p className="text-xs text-gray-500">健康检查</p>
-                  </div>
-                  <div className="bg-black/40 rounded-xl p-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="px-1.5 py-0.5 bg-blue-500/20 text-blue-400 text-xs rounded font-mono">GET</span>
-                      <code className="text-indigo-300 font-mono text-sm">/docs</code>
-                    </div>
-                    <p className="text-xs text-gray-500">Swagger UI 文档</p>
+                    <p>直接返回 MP3 音频文件</p>
                   </div>
                 </div>
               </div>
@@ -209,8 +177,8 @@ export default function App() {
                       <td className="py-3 px-4 font-mono text-indigo-400 font-medium">tex</td>
                       <td className="py-3 px-4 text-gray-400">string</td>
                       <td className="py-3 px-4 text-gray-400">-</td>
-                      <td className="py-3 px-4 text-gray-400">1~5000字</td>
-                      <td className="py-3 px-4 text-gray-400">要合成的文本（必填）</td>
+                      <td className="py-3 px-4 text-gray-400">必填</td>
+                      <td className="py-3 px-4 text-gray-400">要合成的文本</td>
                     </tr>
                     <tr className="border-b border-white/5 bg-white/[0.02]">
                       <td className="py-3 px-4 font-mono text-indigo-400 font-medium">spk</td>
@@ -250,15 +218,21 @@ export default function App() {
               <h3 className="text-lg font-bold text-white mb-4">💻 调用示例</h3>
               <div className="space-y-4">
                 <div className="bg-black/40 rounded-xl p-4">
+                  <p className="text-xs text-gray-500 mb-2"># 浏览器直接访问</p>
+                  <code className="text-sm text-green-400 font-mono break-all">
+                    https://your-app.streamlit.app/?tex=你好世界
+                  </code>
+                </div>
+                <div className="bg-black/40 rounded-xl p-4">
                   <p className="text-xs text-gray-500 mb-2"># curl 下载 MP3</p>
                   <code className="text-sm text-green-400 font-mono break-all">
-                    curl -o output.mp3 "http://localhost:8000/text2audio?tex=你好世界&spk=zh-CN-YunxiNeural"
+                    curl -o output.mp3 "https://your-app.streamlit.app/?tex=你好世界&spk=zh-CN-YunxiNeural"
                   </code>
                 </div>
                 <div className="bg-black/40 rounded-xl p-4">
                   <p className="text-xs text-gray-500 mb-2"># HTML audio 标签直接播放</p>
                   <code className="text-sm text-yellow-300 font-mono break-all">
-                    {'<audio src="http://localhost:8000/text2audio?tex=你好世界" controls></audio>'}
+                    {'<audio src="https://your-app.streamlit.app/?tex=你好世界" controls></audio>'}
                   </code>
                 </div>
                 <div className="bg-black/40 rounded-xl p-4">
@@ -267,7 +241,7 @@ export default function App() {
 {`import requests
 
 response = requests.get(
-    "http://localhost:8000/text2audio",
+    "https://your-app.streamlit.app/",
     params={"tex": "你好世界", "spk": "zh-CN-YunxiNeural", "rate": 10}
 )
 with open("output.mp3", "wb") as f:
@@ -277,7 +251,7 @@ with open("output.mp3", "wb") as f:
                 <div className="bg-black/40 rounded-xl p-4">
                   <p className="text-xs text-gray-500 mb-2"># JavaScript fetch</p>
                   <pre className="text-sm text-purple-300 font-mono whitespace-pre-wrap">
-{`const response = await fetch('/text2audio?tex=你好世界');
+{`const response = await fetch('https://your-app.streamlit.app/?tex=你好世界');
 const blob = await response.blob();
 const audio = new Audio(URL.createObjectURL(blob));
 audio.play();`}
@@ -387,7 +361,7 @@ audio.play();`}
               <div className="bg-white/5 rounded-2xl border border-white/10 p-6">
                 <h3 className="text-lg font-bold text-white mb-4">🔗 生成的 API URL</h3>
                 <div className="bg-black/60 rounded-xl p-4 font-mono text-xs text-green-400 break-all">
-                  http://localhost:8000{apiUrl}
+                  https://your-app.streamlit.app/{apiUrl}
                 </div>
                 <button
                   onClick={handleCopy}
@@ -436,113 +410,9 @@ audio.play();`}
               <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-2xl border border-indigo-500/20 p-6">
                 <h3 className="text-sm font-bold text-indigo-300 mb-2">💡 提示</h3>
                 <p className="text-xs text-gray-400">
-                  此页面为 API 调试工具。启动 FastAPI 服务后，将 URL 中的 localhost:8000 替换为实际服务地址即可使用。
+                  部署到 Streamlit Cloud 后，将 URL 中的 your-app.streamlit.app 替换为实际地址即可使用。
+                  在浏览器中直接访问带参数的 URL 即可播放音频。
                 </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Compare Tab */}
-        {activeTab === 'compare' && (
-          <div className="space-y-6">
-            <div className="bg-white/5 rounded-2xl border border-white/10 p-6">
-              <h3 className="text-lg font-bold text-white mb-6">🔄 百度 TTS API vs Edge-TTS-API</h3>
-              
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* Baidu */}
-                <div className="bg-red-500/5 rounded-xl border border-red-500/20 p-5">
-                  <h4 className="font-bold text-red-400 mb-3 flex items-center gap-2">
-                    <span className="w-2 h-2 bg-red-400 rounded-full"></span>
-                    百度 TTS API
-                  </h4>
-                  <div className="bg-black/40 rounded-lg p-3 font-mono text-xs text-yellow-300/80 break-all mb-4">
-                    http://tts.baidu.com/text2audio?<br />
-                    &nbsp;&nbsp;cuid=baike&<br />
-                    &nbsp;&nbsp;lan=ZH&<br />
-                    &nbsp;&nbsp;ctp=1&<br />
-                    &nbsp;&nbsp;pdt=301&<br />
-                    &nbsp;&nbsp;vol=15&<br />
-                    &nbsp;&nbsp;rate=32&<br />
-                    &nbsp;&nbsp;tex=test
-                  </div>
-                  <ul className="text-xs text-gray-400 space-y-1">
-                    <li>• 固定参数多（cuid, lan, ctp, pdt）</li>
-                    <li>• 语音选择有限</li>
-                    <li>• 需要网络访问百度服务器</li>
-                    <li>• 可能有调用限制</li>
-                  </ul>
-                </div>
-
-                {/* Edge TTS */}
-                <div className="bg-emerald-500/5 rounded-xl border border-emerald-500/20 p-5">
-                  <h4 className="font-bold text-emerald-400 mb-3 flex items-center gap-2">
-                    <span className="w-2 h-2 bg-emerald-400 rounded-full"></span>
-                    Edge-TTS-API (FastAPI)
-                  </h4>
-                  <div className="bg-black/40 rounded-lg p-3 font-mono text-xs text-green-400 break-all mb-4">
-                    http://localhost:8000/text2audio?<br />
-                    &nbsp;&nbsp;tex=test&<br />
-                    &nbsp;&nbsp;spk=zh-CN-YunxiNeural&<br />
-                    &nbsp;&nbsp;rate=0&<br />
-                    &nbsp;&nbsp;vol=50&<br />
-                    &nbsp;&nbsp;pit=0
-                  </div>
-                  <ul className="text-xs text-gray-400 space-y-1">
-                    <li>• 参数简洁，只需必要参数</li>
-                    <li>• 16+ 种中文语音角色</li>
-                    <li>• 自部署，无调用限制</li>
-                    <li>• 支持语速/音量/音调精细调节</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Parameter Mapping */}
-            <div className="bg-white/5 rounded-2xl border border-white/10 p-6">
-              <h3 className="text-lg font-bold text-white mb-4">📐 参数对应关系</h3>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-white/10">
-                      <th className="text-left py-3 px-4 font-semibold text-gray-300">百度参数</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-300">Edge-TTS 参数</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-300">说明</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b border-white/5">
-                      <td className="py-3 px-4 font-mono text-yellow-300/80">tex</td>
-                      <td className="py-3 px-4 font-mono text-green-400">tex</td>
-                      <td className="py-3 px-4 text-gray-400">合成文本（一致）</td>
-                    </tr>
-                    <tr className="border-b border-white/5 bg-white/[0.02]">
-                      <td className="py-3 px-4 font-mono text-yellow-300/80">vol (0~15)</td>
-                      <td className="py-3 px-4 font-mono text-green-400">vol (0~100)</td>
-                      <td className="py-3 px-4 text-gray-400">音量范围更大</td>
-                    </tr>
-                    <tr className="border-b border-white/5">
-                      <td className="py-3 px-4 font-mono text-yellow-300/80">rate (0~15)</td>
-                      <td className="py-3 px-4 font-mono text-green-400">rate (-50~50)</td>
-                      <td className="py-3 px-4 text-gray-400">支持减速，范围更大</td>
-                    </tr>
-                    <tr className="border-b border-white/5 bg-white/[0.02]">
-                      <td className="py-3 px-4 font-mono text-gray-500">-</td>
-                      <td className="py-3 px-4 font-mono text-green-400">pit (-50~50)</td>
-                      <td className="py-3 px-4 text-gray-400">新增音调控制</td>
-                    </tr>
-                    <tr className="border-b border-white/5">
-                      <td className="py-3 px-4 font-mono text-gray-500">-</td>
-                      <td className="py-3 px-4 font-mono text-green-400">spk</td>
-                      <td className="py-3 px-4 text-gray-400">新增语音角色选择</td>
-                    </tr>
-                    <tr className="bg-white/[0.02]">
-                      <td className="py-3 px-4 font-mono text-yellow-300/80">cuid/lan/ctp/pdt</td>
-                      <td className="py-3 px-4 font-mono text-gray-500">不需要</td>
-                      <td className="py-3 px-4 text-gray-400">无需固定参数</td>
-                    </tr>
-                  </tbody>
-                </table>
               </div>
             </div>
           </div>
@@ -552,57 +422,65 @@ audio.play();`}
         {activeTab === 'deploy' && (
           <div className="space-y-6">
             <div className="bg-white/5 rounded-2xl border border-white/10 p-6">
-              <h3 className="text-lg font-bold text-white mb-4">🚀 部署方式</h3>
+              <h3 className="text-lg font-bold text-white mb-4">🚀 部署到 Streamlit Cloud</h3>
               
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* Docker */}
-                <div className="bg-black/40 rounded-xl border border-white/10 p-5">
-                  <h4 className="font-semibold text-blue-400 mb-3">🐳 Docker 部署</h4>
-                  <div className="bg-black/60 rounded-lg p-3 font-mono text-xs text-gray-300">
-                    <p className="text-gray-500"># Dockerfile</p>
-                    <p>FROM python:3.11-slim</p>
-                    <p>WORKDIR /app</p>
-                    <p>COPY requirements.txt .</p>
-                    <p>RUN pip install -r requirements.txt</p>
-                    <p>COPY main.py .</p>
-                    <p>EXPOSE 8000</p>
-                    <p>CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]</p>
+              <div className="space-y-4">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-8 h-8 bg-indigo-500/20 rounded-full flex items-center justify-center text-indigo-400 font-bold text-sm border border-indigo-500/30">
+                    1
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-white">创建 GitHub 仓库</h4>
+                    <p className="text-sm text-gray-400 mt-1">将项目文件推送到 GitHub 仓库</p>
+                    <div className="mt-2 bg-black/40 rounded-lg p-3 font-mono text-xs text-gray-300">
+                      <p>git init</p>
+                      <p>git add .</p>
+                      <p>git commit -m "Initial commit"</p>
+                      <p>git remote add origin https://github.com/your-username/edge-tts-api.git</p>
+                      <p>git push -u origin main</p>
+                    </div>
                   </div>
                 </div>
 
-                {/* Direct */}
-                <div className="bg-black/40 rounded-xl border border-white/10 p-5">
-                  <h4 className="font-semibold text-purple-400 mb-3">⚡ 直接运行</h4>
-                  <div className="bg-black/60 rounded-lg p-3 font-mono text-xs text-gray-300">
-                    <p className="text-gray-500"># 安装依赖</p>
-                    <p>pip install -r requirements.txt</p>
-                    <p className="mt-2 text-gray-500"># 启动 API 服务</p>
-                    <p>uvicorn main:app --host 0.0.0.0 --port 8000</p>
-                    <p className="mt-2 text-gray-500"># 或开发模式（热重载）</p>
-                    <p>uvicorn main:app --reload --port 8000</p>
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-8 h-8 bg-indigo-500/20 rounded-full flex items-center justify-center text-indigo-400 font-bold text-sm border border-indigo-500/30">
+                    2
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-white">访问 Streamlit Cloud</h4>
+                    <p className="text-sm text-gray-400 mt-1">
+                      前往{' '}
+                      <a href="https://share.streamlit.io" target="_blank" rel="noopener noreferrer" className="text-indigo-400 underline">
+                        share.streamlit.io
+                      </a>
+                      ，使用 GitHub 账号登录
+                    </p>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Cloud Platforms */}
-            <div className="bg-white/5 rounded-2xl border border-white/10 p-6">
-              <h3 className="text-lg font-bold text-white mb-4">☁️ 云平台部署</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-black/40 rounded-xl border border-white/10 p-4">
-                  <h4 className="font-semibold text-orange-400 mb-2">Railway</h4>
-                  <p className="text-xs text-gray-400 mb-2">一键部署，自动 HTTPS</p>
-                  <code className="text-xs text-gray-500 font-mono">Start Command: uvicorn main:app --host 0.0.0.0 --port $PORT</code>
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-8 h-8 bg-indigo-500/20 rounded-full flex items-center justify-center text-indigo-400 font-bold text-sm border border-indigo-500/30">
+                    3
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-white">创建新应用</h4>
+                    <p className="text-sm text-gray-400 mt-1">点击 "New app"，填写配置：</p>
+                    <div className="mt-2 bg-black/40 rounded-lg p-3 text-sm space-y-1">
+                      <p><span className="font-medium text-gray-300">Repository:</span> <span className="text-gray-400">your-username/edge-tts-api</span></p>
+                      <p><span className="font-medium text-gray-300">Branch:</span> <span className="text-gray-400">main</span></p>
+                      <p><span className="font-medium text-gray-300">Main file path:</span> <span className="text-emerald-400">app.py</span></p>
+                    </div>
+                  </div>
                 </div>
-                <div className="bg-black/40 rounded-xl border border-white/10 p-4">
-                  <h4 className="font-semibold text-cyan-400 mb-2">Render</h4>
-                  <p className="text-xs text-gray-400 mb-2">免费额度，支持 Docker</p>
-                  <code className="text-xs text-gray-500 font-mono">Build: pip install -r requirements.txt<br />Start: uvicorn main:app --host 0.0.0.0 --port $PORT</code>
-                </div>
-                <div className="bg-black/40 rounded-xl border border-white/10 p-4">
-                  <h4 className="font-semibold text-green-400 mb-2">Streamlit Cloud</h4>
-                  <p className="text-xs text-gray-400 mb-2">前端界面部署</p>
-                  <code className="text-xs text-gray-500 font-mono">Main file: app.py<br />(Streamlit 前端界面)</code>
+
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-8 h-8 bg-indigo-500/20 rounded-full flex items-center justify-center text-indigo-400 font-bold text-sm border border-indigo-500/30">
+                    4
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-white">部署完成</h4>
+                    <p className="text-sm text-gray-400 mt-1">等待构建完成后，即可获得可访问的 URL，通过 URL 参数调用 API</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -612,12 +490,41 @@ audio.play();`}
               <h3 className="text-lg font-bold text-white mb-4">📁 项目结构</h3>
               <div className="bg-black/40 rounded-xl p-4 font-mono text-sm text-gray-300">
                 <p className="text-yellow-300">edge-tts-api/</p>
-                <p className="ml-4">├── <span className="text-emerald-400">main.py</span>              <span className="text-gray-500"># FastAPI API 服务（核心）</span></p>
-                <p className="ml-4">├── <span className="text-blue-400">app.py</span>               <span className="text-gray-500"># Streamlit 前端界面</span></p>
+                <p className="ml-4">├── <span className="text-emerald-400">app.py</span>              <span className="text-gray-500"># Streamlit 应用（API + 界面）</span></p>
                 <p className="ml-4">├── <span className="text-purple-400">requirements.txt</span>     <span className="text-gray-500"># Python 依赖</span></p>
-                <p className="ml-4">├── <span className="text-orange-400">Dockerfile</span>           <span className="text-gray-500"># Docker 配置</span></p>
                 <p className="ml-4">└── <span className="text-yellow-300">.streamlit/</span></p>
                 <p className="ml-8">└── <span className="text-purple-400">config.toml</span>     <span className="text-gray-500"># Streamlit 主题配置</span></p>
+              </div>
+            </div>
+
+            {/* Files Content */}
+            <div className="bg-white/5 rounded-2xl border border-white/10 p-6">
+              <h3 className="text-lg font-bold text-white mb-4">📄 核心文件说明</h3>
+              <div className="space-y-4">
+                <div className="border border-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-emerald-400 mb-2">app.py</h4>
+                  <p className="text-sm text-gray-400">
+                    Streamlit 主应用文件。同时提供 Web 界面和 API 服务。
+                    通过 URL 参数（?tex=...）触发语音合成，直接返回 MP3 音频。
+                    使用 edge-tts 库进行语音合成，支持 16+ 种中文语音角色。
+                  </p>
+                </div>
+                <div className="border border-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-purple-400 mb-2">requirements.txt</h4>
+                  <p className="text-sm text-gray-400">
+                    Python 依赖配置文件。包含 streamlit 和 edge-tts 两个核心依赖。
+                  </p>
+                  <div className="mt-2 bg-black/40 rounded p-2 font-mono text-xs text-gray-300">
+                    <p>streamlit&gt;=1.30.0</p>
+                    <p>edge-tts&gt;=6.1.0</p>
+                  </div>
+                </div>
+                <div className="border border-white/10 rounded-lg p-4">
+                  <h4 className="font-semibold text-purple-400 mb-2">.streamlit/config.toml</h4>
+                  <p className="text-sm text-gray-400">
+                    Streamlit 主题和服务器配置文件。定义了主色调、背景色、字体等主题参数。
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -628,13 +535,13 @@ audio.play();`}
       <footer className="border-t border-white/10 bg-black/20">
         <div className="max-w-6xl mx-auto px-4 py-6 text-center text-sm text-gray-500">
           <p>
-            Edge-TTS-API | FastAPI + edge-tts | 
+            Edge-TTS-API | Streamlit + edge-tts | 
             <a href="https://github.com/rany2/edge-tts" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline mx-1">
               edge-tts
             </a>
             |
-            <a href="https://fastapi.tiangolo.com" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline mx-1">
-              FastAPI
+            <a href="https://streamlit.io" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline mx-1">
+              Streamlit
             </a>
           </p>
           <p className="mt-1 text-xs text-gray-600">
